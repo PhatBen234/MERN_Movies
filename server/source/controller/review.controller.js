@@ -25,22 +25,23 @@ const create = async (req, res) => {
 
 const remove = async (req, res) => {
   try {
-    const { reviewId } = req.params;
+    const reviewId = req.params.reviewId;
 
-    const review = await reviewModel.findOne({
+    const review = await reviewModel.findOneAndDelete({
       _id: reviewId,
-      user: req.user.id,
+      user: req.user.id
     });
 
-    if (!review) return responseHandler.notfound(res);
+    if (!review) {
+      return responseHandler.notfound(res, "Review not found");
+    }
 
-    await review.remove();
-
-    responseHandler.ok(res);
+    responseHandler.ok(res, review);
   } catch {
     responseHandler.error(res);
   }
 };
+
 
 const getReviewsOfUser = async (req, res) => {
   try {
