@@ -7,6 +7,7 @@ Link to deploy: https://mern-movies-jxac.vercel.app/ <br/>
 3. npm install at cmd <br/>
 4. npm start <br/>
 <h2>Client</h2> <br/>
-1. you should rename your local URL at client/src/api/client, in here you can see 2 files public and private has 2 baseURL, remember to rename it to your localhost <br/>
+1. create another terminal, cd client <br/>
+2. you should rename your local URL at client/src/api/client, in here you can see 2 files public and private, each one has baseURL, remember to rename it to your localhost <br/>
 2. npm install at cmd <br/>
 3. npm start <br/>
