@@ -33,11 +33,11 @@ const App = () => {
       <CssBaseline />
 
       {/* app routes */}
-      <BrowserRouter>
+      <BrowserRouter> 
         <Routes>
-          <Route path="/" element={<MainLayout />}>
-            {routes.map((route, index) => (
-              route.index ? (
+          <Route path="/" element={<MainLayout />}> 
+            {routes.map((route, index) => (// map through routes.jsx
+              route.index ? ( //Example: / => Homepage
                 <Route
                   index
                   key={index}
@@ -46,7 +46,7 @@ const App = () => {
                   ) : route.element}
                 />
               ) : (
-                <Route
+                <Route //Example: path="/person/:personId
                   path={route.path}
                   key={index}
                   element={route.state ? (

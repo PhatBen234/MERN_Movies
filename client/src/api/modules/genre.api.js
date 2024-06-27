@@ -1,7 +1,7 @@
 import publicClient from "../client/public.client";
-
+// interact with genre API in backend
 const genreEndpoints = {
-  list: ({ mediaType }) => `${mediaType}/genres`,
+  list: ({ mediaType }) => `${mediaType}/genres`, //mediaType:movie,tv
 };
 
 const genreApi = {

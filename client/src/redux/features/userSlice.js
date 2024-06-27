@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+//set up default user & favorite list
 export const userSlice = createSlice({
   name: "User",
   initialState: {

@@ -6,7 +6,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
 
-const main = [
+const main = [ //main menu
   {
     display: "home",
     path: "/",
@@ -33,7 +33,7 @@ const main = [
   },
 ];
 
-const user = [
+const user = [ // user menu
   {
     display: "favorites",
     path: "/favorites",

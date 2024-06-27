@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+// set up default authModalSlice ( cửa sổ khi đăng nhập, đăng ký)
 export const authModalSlice = createSlice({
   name: "AuthModal",
   initialState: {

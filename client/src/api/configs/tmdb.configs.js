@@ -1,3 +1,4 @@
+//Interact with api in TMDB
 const mediaType = {
   movie: "movie",
   tv: "tv",

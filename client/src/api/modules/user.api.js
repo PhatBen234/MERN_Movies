@@ -1,6 +1,6 @@
 import privateClient from "../client/private.client";
 import publicClient from "../client/public.client";
-
+// interact with user API in backend
 const userEndpoints = {
   signin: "user/signin",
   signup: "user/signup",

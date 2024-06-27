@@ -1,6 +1,6 @@
 import privateClient from "../client/private.client";
 import publicClient from "../client/public.client";
-
+// interact with media API in backend
 const mediaEndpoints = {
   list: ({ mediaType, mediaCategory, page }) => `${mediaType}/${mediaCategory}?page=${page}`,
   detail: ({ mediaType, mediaId }) => `${mediaType}/detail/${mediaId}`,

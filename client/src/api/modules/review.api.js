@@ -1,5 +1,5 @@
 import privateClient from "../client/private.client";
-
+// interact with rv API in backend
 const reviewEndpoints = {
   list: "reviews",
   add: "reviews",

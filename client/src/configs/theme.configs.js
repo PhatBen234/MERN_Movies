@@ -1,13 +1,13 @@
 import { createTheme } from "@mui/material/styles";
 import { colors } from "@mui/material";
-
+//dark or light
 export const themeModes = {
   dark: "dark",
   light: "light",
 };
 
 const themeConfigs = {
-  custom: ({ mode }) => {
+  custom: ({ mode }) => { //custom will change dark or light
     const customPalette =
       mode === themeModes.dark
         ? {

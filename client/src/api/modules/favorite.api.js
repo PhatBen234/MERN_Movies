@@ -1,5 +1,5 @@
 import privateClient from "../client/private.client";
-
+// interact with favorite API in backend
 const favoriteEndpoints = {
   list: "user/favorites",
   add: "user/favorites",

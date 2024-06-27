@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+//set up default app state
 export const appStateSlice = createSlice({
   name: "AppState",
   initialState: {

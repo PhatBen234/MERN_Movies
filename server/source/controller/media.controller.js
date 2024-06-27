@@ -8,7 +8,7 @@ import tokenMiddlerware from "../middlewares/token.middleware.js";
 const getList = async (req, res) => {
   try {
     let { page } = req.query;
-    const { mediaType, mediaCategory } = req.params;
+    const { mediaType, mediaCategory } = req.params; // mediaType:movie,tv ; mediaCategory:popular,top_rate
     page = parseInt(page, 10) || 1;
 
     const response = await tmdbApi.mediaList({
