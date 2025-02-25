@@ -1,3 +1,4 @@
+//GET cac du lieu API tu ben thu 3
 import axios from "axios";
 
 const get = async (url) => {
