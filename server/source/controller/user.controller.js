@@ -96,7 +96,13 @@ const googleAuthCallback = async (req, res) => {
 
     const token = generateToken(user);
 
-    const redirectUrl = `${process.env.FRONTEND_URL}/auth/google?token=${token}&userId=${user.id}`;
+    const frontendURL =
+      process.env.NODE_ENV === "production"
+        ? process.env.FRONTEND_URL_PROD
+        : process.env.FRONTEND_URL_LOCAL;
+
+    const redirectUrl = `${frontendURL}/auth/google?token=${token}&userId=${user.id}`;
+
     return res.redirect(redirectUrl);
 
   } catch (error) {
