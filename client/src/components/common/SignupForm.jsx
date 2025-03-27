@@ -12,43 +12,53 @@ import { setUser } from "../../redux/features/userSlice";
 const SignupForm = ({ switchAuthState }) => {
   const dispatch = useDispatch();
 
-  const [isLoginRequest, setIsLoginRequest] = useState(false);
+  const [isSignupRequest, setIsSignupRequest] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
 
-  const signinForm = useFormik({
+  const signupForm = useFormik({
     initialValues: {
-      password: "",
       username: "",
       displayName: "",
+      email: "", // ✅ Thêm email
+      password: "",
       confirmPassword: ""
     },
     validationSchema: Yup.object({
       username: Yup.string()
-        .min(8, "username minimum 8 characters")
-        .required("username is required"),
-      password: Yup.string()
-        .min(8, "password minimum 8 characters")
-        .required("password is required"),
+        .min(8, "Username must be at least 8 characters")
+        .required("Username is required"),
       displayName: Yup.string()
-        .min(8, "displayName minimum 8 characters")
-        .required("displayName is required"),
+        .min(8, "Display name must be at least 8 characters")
+        .required("Display name is required"),
+      email: Yup.string()
+        .email("Invalid email format") // ✅ Validate email
+        .required("Email is required"),
+      password: Yup.string()
+        .min(8, "Password must be at least 8 characters")
+        .required("Password is required"),
       confirmPassword: Yup.string()
-        .oneOf([Yup.ref("password")], "confirmPassword not match")
-        .min(8, "confirmPassword minimum 8 characters")
-        .required("confirmPassword is required")
+        .oneOf([Yup.ref("password")], "Passwords do not match")
+        .required("Confirm password is required")
     }),
     onSubmit: async values => {
       setErrorMessage(undefined);
-      setIsLoginRequest(true);
-      console.log("asdasdasdasd");
-      const { response, err } = await userApi.signup(values);
-      setIsLoginRequest(false);
+      setIsSignupRequest(true);
+
+      const { response, err } = await userApi.signup({
+        username: values.username,
+        displayName: values.displayName,
+        email: values.email, // ✅ Thêm email khi gửi request
+        password: values.password,
+        confirmPassword: values.confirmPassword
+      });
+
+      setIsSignupRequest(false);
 
       if (response) {
-        signinForm.resetForm();
+        signupForm.resetForm();
         dispatch(setUser(response));
         dispatch(setAuthModalOpen(false));
-        toast.success("Sign in success");
+        toast.success("Sign up successful");
       }
 
       if (err) setErrorMessage(err.message);
@@ -56,51 +66,62 @@ const SignupForm = ({ switchAuthState }) => {
   });
 
   return (
-    <Box component="form" onSubmit={signinForm.handleSubmit}>
+    <Box component="form" onSubmit={signupForm.handleSubmit}>
       <Stack spacing={3}>
         <TextField
           type="text"
-          placeholder="username"
+          placeholder="Username"
           name="username"
           fullWidth
-          value={signinForm.values.username}
-          onChange={signinForm.handleChange}
+          value={signupForm.values.username}
+          onChange={signupForm.handleChange}
           color="success"
-          error={signinForm.touched.username && signinForm.errors.username !== undefined}
-          helperText={signinForm.touched.username && signinForm.errors.username}
+          error={signupForm.touched.username && Boolean(signupForm.errors.username)}
+          helperText={signupForm.touched.username && signupForm.errors.username}
         />
         <TextField
           type="text"
-          placeholder="display name"
+          placeholder="Display Name"
           name="displayName"
           fullWidth
-          value={signinForm.values.displayName}
-          onChange={signinForm.handleChange}
+          value={signupForm.values.displayName}
+          onChange={signupForm.handleChange}
           color="success"
-          error={signinForm.touched.displayName && signinForm.errors.displayName !== undefined}
-          helperText={signinForm.touched.displayName && signinForm.errors.displayName}
+          error={signupForm.touched.displayName && Boolean(signupForm.errors.displayName)}
+          helperText={signupForm.touched.displayName && signupForm.errors.displayName}
+        />
+        <TextField
+          type="email"
+          placeholder="Email"
+          name="email"
+          fullWidth
+          value={signupForm.values.email}
+          onChange={signupForm.handleChange}
+          color="success"
+          error={signupForm.touched.email && Boolean(signupForm.errors.email)}
+          helperText={signupForm.touched.email && signupForm.errors.email}
         />
         <TextField
           type="password"
-          placeholder="password"
+          placeholder="Password"
           name="password"
           fullWidth
-          value={signinForm.values.password}
-          onChange={signinForm.handleChange}
+          value={signupForm.values.password}
+          onChange={signupForm.handleChange}
           color="success"
-          error={signinForm.touched.password && signinForm.errors.password !== undefined}
-          helperText={signinForm.touched.password && signinForm.errors.password}
+          error={signupForm.touched.password && Boolean(signupForm.errors.password)}
+          helperText={signupForm.touched.password && signupForm.errors.password}
         />
         <TextField
           type="password"
-          placeholder="confirm password"
+          placeholder="Confirm Password"
           name="confirmPassword"
           fullWidth
-          value={signinForm.values.confirmPassword}
-          onChange={signinForm.handleChange}
+          value={signupForm.values.confirmPassword}
+          onChange={signupForm.handleChange}
           color="success"
-          error={signinForm.touched.confirmPassword && signinForm.errors.confirmPassword !== undefined}
-          helperText={signinForm.touched.confirmPassword && signinForm.errors.confirmPassword}
+          error={signupForm.touched.confirmPassword && Boolean(signupForm.errors.confirmPassword)}
+          helperText={signupForm.touched.confirmPassword && signupForm.errors.confirmPassword}
         />
       </Stack>
 
@@ -110,9 +131,9 @@ const SignupForm = ({ switchAuthState }) => {
         size="large"
         variant="contained"
         sx={{ marginTop: 4 }}
-        loading={isLoginRequest}
+        loading={isSignupRequest}
       >
-        sign up
+        Sign Up
       </LoadingButton>
 
       <Button
@@ -120,12 +141,12 @@ const SignupForm = ({ switchAuthState }) => {
         sx={{ marginTop: 1 }}
         onClick={() => switchAuthState()}
       >
-        sign in
+        Already have an account? Sign in
       </Button>
 
       {errorMessage && (
         <Box sx={{ marginTop: 2 }}>
-          <Alert severity="error" variant="outlined" >{errorMessage}</Alert>
+          <Alert severity="error" variant="outlined">{errorMessage}</Alert>
         </Box>
       )}
     </Box>

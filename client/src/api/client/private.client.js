@@ -1,7 +1,7 @@
 import axios from "axios";
 import queryString from "query-string";
 
-const baseURL = "https://mern-movies-seven.vercel.app/api/v1";
+const baseURL = "https://mern-movies-api.onrender.com/api/v1";
 
 const privateClient = axios.create({
   baseURL,

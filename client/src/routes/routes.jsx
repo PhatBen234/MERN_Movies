@@ -7,6 +7,7 @@ import MediaSearch from "../pages/MediaSearch";
 import PasswordUpdate from "../pages/PasswordUpdate";
 import ReviewList from "../pages/ReviewList";
 import ProtectedPage from "../components/common/ProtectedPage";
+import AuthGoogle from "../pages/AuthGoogle"; // thêm
 
 export const routesGen = {
   home: "/",
@@ -16,7 +17,8 @@ export const routesGen = {
   person: (id) => `/person/${id}`,
   favoriteList: "/favorites",
   reviewList: "/reviews",
-  passwordUpdate: "password-update"
+  passwordUpdate: "/password-update",
+  authGoogle: "/auth/google" // ✅ thêm
 };
 
 const routes = [
@@ -61,6 +63,11 @@ const routes = [
       </ProtectedPage>
     ),
     state: "reviews"
+  },
+  {
+    path: "/auth/google", 
+    element: <AuthGoogle />,
+    state: "auth.google"
   },
   {
     path: "/:mediaType",
