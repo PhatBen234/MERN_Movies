@@ -1,5 +1,5 @@
 ﻿# MERN_Movies
-Link to deploy: https://mern-movies-jxac.vercel.app/ <br/>
+Link to deploy: https://mern-movies.vercel.app/ <br/>
 <h1>How to run at your local?</h1> <br/>
 <h2>Server</h2> <br/>
 1. cd server <br/>
