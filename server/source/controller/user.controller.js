@@ -1,13 +1,23 @@
 import userModel from "../model/user.model.js";
 import jsonwebtoken from "jsonwebtoken";
 import responseHandler from "../handlers/response.handler.js";
+import "dotenv/config";
 
+/** 🔹 Generate JWT Token */
+const generateToken = (user) => {
+  return jsonwebtoken.sign(
+    { data: user.id },
+    process.env.TOKEN_SECRET,
+    { expiresIn: "24h" }
+  );
+};
+
+/** 🔹 User Signup */
 const signup = async (req, res) => {
   try {
     const { username, password, displayName, email } = req.body;
 
     const checkUser = await userModel.findOne({ $or: [{ username }, { email }] });
-
     if (checkUser) return responseHandler.badrequest(res, "Username or email already used");
 
     const user = new userModel({
@@ -18,25 +28,25 @@ const signup = async (req, res) => {
     });
 
     user.setPassword(password);
-
     await user.save();
 
-    const token = jsonwebtoken.sign(
-      { data: user.id },
-      process.env.TOKEN_SECRET,
-      { expiresIn: "24h" }
-    );
+    const token = generateToken(user);
 
     responseHandler.created(res, {
       token,
-      ...user._doc,
-      id: user.id,
+      user: {
+        id: user.id,
+        username: user.username,
+        displayName: user.displayName,
+        email: user.email,
+      }
     });
-  } catch {
+  } catch (error) {
     responseHandler.error(res);
   }
 };
 
+/** 🔹 User Signin */
 const signin = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -50,55 +60,51 @@ const signin = async (req, res) => {
     if (!user.validPassword(password))
       return responseHandler.badrequest(res, "Wrong password");
 
-    const token = jsonwebtoken.sign(
-      { data: user.id },
-      process.env.TOKEN_SECRET,
-      { expiresIn: "24h" }
-    );
+    const token = generateToken(user);
 
-    responseHandler.created(res, {
+    responseHandler.ok(res, {
       token,
-      ...user._doc,
-      id: user.id,
+      user: {
+        id: user.id,
+        username: user.username,
+        displayName: user.displayName,
+        email: user.email,
+      }
     });
-  } catch {
+  } catch (error) {
     responseHandler.error(res);
   }
 };
 
-const googleAuth = async (req, res) => {
+/** 🔹 Google OAuth Callback */
+const googleAuthCallback = async (req, res) => {
   try {
-    const { googleId, email, displayName, avatar } = req.body;
+    if (!req.user) return responseHandler.unauthorize(res);
 
-    let user = await userModel.findOne({ email });
+    let user = await userModel.findOne({ email: req.user.email });
 
     if (!user) {
       user = new userModel({
-        googleId,
-        email,
-        displayName,
-        avatar,
+        googleId: req.user.id,
+        email: req.user.email,
+        displayName: req.user.displayName,
+        avatar: req.user.avatar,
         authProvider: "google",
       });
       await user.save();
     }
 
-    const token = jsonwebtoken.sign(
-      { data: user.id },
-      process.env.TOKEN_SECRET,
-      { expiresIn: "24h" }
-    );
+    const token = generateToken(user);
 
-    responseHandler.ok(res, {
-      token,
-      ...user._doc,
-      id: user.id,
-    });
-  } catch {
-    responseHandler.error(res);
+    const redirectUrl = `${process.env.FRONTEND_URL}/auth/google?token=${token}&userId=${user.id}`;
+    return res.redirect(redirectUrl);
+
+  } catch (error) {
+    return responseHandler.error(res, "Google authentication failed");
   }
 };
 
+/** 🔹 Update Password */
 const updatePassword = async (req, res) => {
   try {
     const { password, newPassword } = req.body;
@@ -119,20 +125,21 @@ const updatePassword = async (req, res) => {
     user.setPassword(newPassword);
     await user.save();
 
-    responseHandler.ok(res);
-  } catch {
+    responseHandler.ok(res, { message: "Password updated successfully" });
+  } catch (error) {
     responseHandler.error(res);
   }
 };
 
+/** 🔹 Get User Info */
 const getInfo = async (req, res) => {
   try {
-    const user = await userModel.findById(req.user.id);
+    const user = await userModel.findById(req.user.id).select("-password -salt");
 
     if (!user) return responseHandler.notfound(res);
 
     responseHandler.ok(res, user);
-  } catch {
+  } catch (error) {
     responseHandler.error(res);
   }
 };
@@ -140,7 +147,7 @@ const getInfo = async (req, res) => {
 export default {
   signup,
   signin,
-  googleAuth,
+  googleAuthCallback,
   getInfo,
   updatePassword,
 };
