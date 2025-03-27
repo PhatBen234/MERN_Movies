@@ -9,14 +9,18 @@ import passport from "passport";
 import session from "express-session";
 import "./source/config/passport.js";
 
-
 const app = express();
 
-const allowedOrigins = process.env.FRONTEND_URL.split(",");
+// ✅ CORS whitelist
+const allowedOrigins = [
+  process.env.FRONTEND_URL_LOCAL,
+  process.env.FRONTEND_URL_PROD,
+];
 
 app.use(
   cors({
     origin: function (origin, callback) {
+      // Cho phép Postman hoặc server request
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -28,9 +32,6 @@ app.use(
     credentials: true,
   })
 );
-
-
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -48,7 +49,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api/v1", routes);
-
 
 app.get("/", (req, res) => {
   res.send("Server is running!");
