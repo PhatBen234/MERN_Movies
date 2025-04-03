@@ -81,27 +81,14 @@ const googleAuthCallback = async (req, res) => {
   try {
     if (!req.user) return responseHandler.unauthorize(res);
 
-    let user = await userModel.findOne({ email: req.user.email });
-
-    if (!user) {
-      user = new userModel({
-        googleId: req.user.id,
-        email: req.user.email,
-        displayName: req.user.displayName,
-        avatar: req.user.avatar,
-        authProvider: "google",
-      });
-      await user.save();
-    }
-
-    const token = generateToken(user);
+    const token = generateToken(req.user);
 
     const frontendURL =
       process.env.NODE_ENV === "production"
         ? process.env.FRONTEND_URL_PROD
         : process.env.FRONTEND_URL_LOCAL;
 
-    const redirectUrl = `${frontendURL}/auth/google?token=${token}&userId=${user.id}`;
+    const redirectUrl = `${frontendURL}/auth/google?token=${token}&userId=${req.user.id}`;
 
     return res.redirect(redirectUrl);
 
@@ -109,6 +96,7 @@ const googleAuthCallback = async (req, res) => {
     return responseHandler.error(res, "Google authentication failed");
   }
 };
+
 
 /** 🔹 Update Password */
 const updatePassword = async (req, res) => {
